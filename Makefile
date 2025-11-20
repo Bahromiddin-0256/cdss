@@ -11,11 +11,11 @@ HAS_GPU := $(shell docker run --rm --gpus all nvidia/cuda:11.8.0-base-ubuntu22.0
 
 # Docker compose command with or without GPU
 ifeq ($(HAS_GPU),yes)
-	DOCKER_COMPOSE := docker-compose -f docker-compose.yml -f docker-compose.gpu.yml
+	DOCKER_COMPOSE := docker compose -f docker-compose.yml -f docker-compose.gpu.yml
 	GPU_MSG := GPU detected - GPU support enabled
 	GPU_COLOR := $(GREEN)
 else
-	DOCKER_COMPOSE := docker-compose -f docker-compose.yml
+	DOCKER_COMPOSE := docker compose -f docker-compose.yml
 	GPU_MSG := No GPU detected - Running in CPU mode
 	GPU_COLOR := $(YELLOW)
 endif
@@ -44,7 +44,7 @@ up: ## Start all services
 
 up-gpu: ## Force start with GPU support (override detection)
 	@echo "$(GREEN)Starting CDSS services with GPU (forced)...$(NC)"
-	@docker-compose -f docker-compose.yml -f docker-compose.gpu.yml up -d
+	@docker compose -f docker-compose.yml -f docker-compose.gpu.yml up -d
 	@echo "$(GREEN)Services started with GPU!$(NC)"
 	@echo "Frontend: http://localhost:3000"
 	@echo "Backend API: http://localhost:8000"
@@ -52,7 +52,7 @@ up-gpu: ## Force start with GPU support (override detection)
 
 up-cpu: ## Force start without GPU support
 	@echo "$(GREEN)Starting CDSS services in CPU mode (forced)...$(NC)"
-	@docker-compose -f docker-compose.yml up -d
+	@docker compose -f docker-compose.yml up -d
 	@echo "$(GREEN)Services started in CPU mode!$(NC)"
 	@echo "Frontend: http://localhost:3000"
 	@echo "Backend API: http://localhost:8000"
@@ -60,7 +60,7 @@ up-cpu: ## Force start without GPU support
 
 down: ## Stop all services
 	@echo "$(RED)Stopping CDSS services...$(NC)"
-	@docker-compose down
+	@docker compose down
 
 restart: ## Restart all services
 	@echo "$(YELLOW)Restarting CDSS services...$(NC)"
