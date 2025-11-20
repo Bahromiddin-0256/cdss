@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CDSS - Kasallik Bashorati</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div id="app">
+        <div class="container">
+            <!-- Header -->
+            <header>
+                <h1>🏥 Klinik Qarorlarni Qo'llab-quvvatlash Tizimi</h1>
+                <p>Kasallik Bashorati va Diagnostika</p>
+            </header>
+
+            <!-- Main Content -->
+            <div class="content">
+                <!-- Input Form -->
+                <div class="card">
+                    <h2>📋 Bemor Ma'lumotlari</h2>
+                    <form @submit.prevent="predictDisease">
+                        <div class="form-group">
+                            <label>Yosh</label>
+                            <input type="number" v-model.number="patientData.age"
+                                   min="0" max="120" required>
+                            <span class="unit">yil</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Qon Bosimi (Sistolic)</label>
+                            <input type="number" v-model.number="patientData.blood_pressure"
+                                   min="60" max="200" required>
+                            <span class="unit">mmHg</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Xolesterin</label>
+                            <input type="number" v-model.number="patientData.cholesterol"
+                                   min="100" max="400" required>
+                            <span class="unit">mg/dL</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Qon Shakar</label>
+                            <input type="number" v-model.number="patientData.glucose"
+                                   min="50" max="300" required>
+                            <span class="unit">mg/dL</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label>BMI (Tana Massa Indeksi)</label>
+                            <input type="number" step="0.1" v-model.number="patientData.bmi"
+                                   min="10" max="50" required>
+                            <span class="unit">kg/m²</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Yurak Urish Tezligi</label>
+                            <input type="number" v-model.number="patientData.heart_rate"
+                                   min="40" max="200" required>
+                            <span class="unit">bpm</span>
+                        </div>
+
+                        <button type="submit" class="btn-primary" :disabled="loading">
+                            {{ loading ? '⏳ Tahlil qilinmoqda...' : '🔍 Tahlil qilish' }}
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Results -->
+                <div class="card" v-if="result">
+                    <h2>📊 Tahlil Natijalari</h2>
+
+                    <div class="result-main">
+                        <div class="prediction-box" :class="getPredictionClass(result.prediction)">
+                            <h3>Bashorat:</h3>
+                            <div class="prediction-name">{{ result.prediction }}</div>
+                            <div class="confidence">
+                                Ishonch darajasi: {{ result.confidence.toFixed(1) }}%
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="probabilities">
+                        <h3>Ehtimolliklar:</h3>
+                        <div class="prob-item" v-for="(prob, disease) in result.all_probabilities" :key="disease">
+                            <span class="disease-name">{{ disease }}</span>
+                            <div class="prob-bar">
+                                <div class="prob-fill" :style="{width: prob + '%'}"></div>
+                            </div>
+                            <span class="prob-value">{{ prob.toFixed(1) }}%</span>
+                        </div>
+                    </div>
+
+                    <canvas id="chartCanvas" width="400" height="200"></canvas>
+                </div>
+
+                <!-- Error -->
+                <div class="card error" v-if="error">
+                    <h3>❌ Xatolik</h3>
+                    <p>{{ error }}</p>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <footer>
+                <p>⚠️ Ogohlantirish: Ushbu tizim faqat demo maqsadida. Haqiqiy tibbiy qarorlar uchun shifokorga murojaat qiling.</p>
+                <p>© 2024 CDSS Mini Project</p>
+            </footer>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
